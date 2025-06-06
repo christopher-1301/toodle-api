@@ -1,7 +1,16 @@
 const express = require("express");
-const app = express();
+const swaggerUi = require("swagger-ui-express");
+const YAML = require("yamljs");
 
-app.use(express.json());
+const app = express();
+const swaggerDocument = YAML.load("./swagger.yaml");
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument),
+  express.json()
+);
 
 app.get("/", (req, res) => {
   res.json({ message: "Hello from your API!" });
