@@ -31,3 +31,17 @@ router.post("/tasks", (req, res) => {
 
   res.status(201).json(newTask);
 });
+
+router.get("/tasks", (req, res) => {
+  res.status(200).json(tasks);
+});
+
+router.get("/tasks/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const task = tasks.find((t) => t.id === id);
+  if (!task) {
+    return res.status(404).json({ error: "Task not found" });
+  }
+
+  res.status(200).json(task);
+});
