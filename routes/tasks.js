@@ -40,6 +40,7 @@ router.get("/tasks", (req, res) => {
 router.get("/tasks/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const task = tasks.find((t) => t.id === id);
+
   if (!task) {
     return res.status(404).json({ error: "Task not found" });
   }
@@ -52,6 +53,11 @@ router.put("/tasks/:id", (req, res) => {
   const taskToUpdate = tasks.find((t) => t.id === taskId);
   if (!taskToUpdate) {
     return res.status(404).json({ error: "Task not found" });
+  }
+
+  const updatedTask = updateTaskFields(taskToUpdate, req.body);
+  if (!updatedTask) {
+    return res.status(400).json({ error: "No valid updates found" });
   }
 
   updateTaskFields(taskToUpdate, req.body);
