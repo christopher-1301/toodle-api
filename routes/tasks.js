@@ -45,3 +45,15 @@ router.get("/tasks/:id", (req, res) => {
 
   res.status(200).json(task);
 });
+
+router.delete("/tasks/:id", (req, res) => {
+  const taskId = parseInt(req.params.id);
+  if (isNaN(taskId)) {
+    return res.status(400).json({ error: "Invalid task ID" });
+  }
+  const taskIndex = tasks.findIndex((t) => t.id === taskId);
+  if (taskIndex === -1) {
+    return res.status(404).json({ error: "Task not found" });
+  }
+  res.status(204).send();
+});
