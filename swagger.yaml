@@ -56,6 +56,73 @@ paths:
               schema:
                 $ref: "#/components/schemas/Task"
 
+    put:
+      summary: Update a task by ID
+      tags:
+        - Tasks
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the task to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "Updated Task Title"
+                description:
+                  type: string
+                  example: "Updated task description"
+                priority:
+                  type: integer
+                  example: 1
+                dueDate:
+                  type: string
+                  format: date-time
+                  example: "2026-03-15T00:00:00Z"
+                completed:
+                  type: boolean
+                  example: true
+      responses:
+        "200":
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "400":
+          description: Bad request
+        "404":
+          description: Task not found
+
+    delete:
+      summary: Delete a task by ID
+      tags:
+        - Tasks
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the task to delete
+      responses:
+        "204":
+          description: Task successfully deleted (no content)
+        "404":
+          description: Task not found
+        "400":
+          description: Invalid task ID
+      security:
+        - bearerAuth: []
+
 components:
   securitySchemes:
     bearerAuth:
