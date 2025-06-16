@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { updateTaskFields } = require("../helpers/taskHelpers");
 
 const tasks = [];
 
@@ -39,11 +40,27 @@ router.get("/tasks", (req, res) => {
 router.get("/tasks/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const task = tasks.find((t) => t.id === id);
+
   if (!task) {
     return res.status(404).json({ error: "Task not found" });
   }
 
   res.status(200).json(task);
+});
+
+router.put("/tasks/:id", (req, res) => {
+  const taskId = parseInt(req.params.id);
+  const taskToUpdate = tasks.find((t) => t.id === taskId);
+  if (!taskToUpdate) {
+    return res.status(404).json({ error: "Task not found" });
+  }
+
+  const updatedTask = updateTaskFields(taskToUpdate, req.body);
+  if (!updatedTask) {
+    return res.status(400).json({ error: "No valid updates found" });
+  }
+
+  updateTaskFields(taskToUpdate, req.body);
 });
 
 router.delete("/tasks/:id", (req, res) => {
