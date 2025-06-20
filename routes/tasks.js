@@ -4,11 +4,22 @@ const { updateTaskFields } = require("../helpers/taskHelpers");
 
 const tasks = [];
 
-router.get("/tasks", (req, res) => {
-  res.json(tasks);
+router.get("/", (req, res) => {
+  res.status(200).json(tasks);
 });
 
-router.post("/tasks", (req, res) => {
+router.get("/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const task = tasks.find((t) => t.id === id);
+
+  if (!task) {
+    return res.status(404).json({ error: "Task not found" });
+  }
+
+  res.status(200).json(task);
+});
+
+router.post("/", (req, res) => {
   if (!req.body.title) {
     return res.status(400).json({ error: "Title is required" });
   }
@@ -33,24 +44,10 @@ router.post("/tasks", (req, res) => {
   res.status(201).json(newTask);
 });
 
-router.get("/tasks", (req, res) => {
-  res.status(200).json(tasks);
-});
-
-router.get("/tasks/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const task = tasks.find((t) => t.id === id);
-
-  if (!task) {
-    return res.status(404).json({ error: "Task not found" });
-  }
-
-  res.status(200).json(task);
-});
-
-router.put("/tasks/:id", (req, res) => {
+router.put("/:id", (req, res) => {
   const taskId = parseInt(req.params.id);
   const taskToUpdate = tasks.find((t) => t.id === taskId);
+
   if (!taskToUpdate) {
     return res.status(404).json({ error: "Task not found" });
   }
@@ -60,18 +57,23 @@ router.put("/tasks/:id", (req, res) => {
     return res.status(400).json({ error: "No valid updates found" });
   }
 
-  updateTaskFields(taskToUpdate, req.body);
+  res.status(200).json(updatedTask);
 });
 
 router.delete("/tasks/:id", (req, res) => {
   const taskId = parseInt(req.params.id);
+
   if (isNaN(taskId)) {
     return res.status(400).json({ error: "Invalid task ID" });
   }
+
   const taskIndex = tasks.findIndex((t) => t.id === taskId);
+
   if (taskIndex === -1) {
     return res.status(404).json({ error: "Task not found" });
   }
+
+  tasks.splice(taskIndex, 1);
   res.status(204).send();
 });
 
